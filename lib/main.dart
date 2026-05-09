@@ -18,201 +18,227 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+// _HomeScreenState is the state class for HomeScreen, managing the state of the employee list and input fields.
+class _HomeScreenState extends State<HomeScreen> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController salaryController = TextEditingController();
+
+  final List<Map<String, dynamic>> employees = [
+    {'name': 'John H.', 'salary': 800, 'highlighted': false},
+    {'name': 'Alex M.', 'salary': 3000, 'highlighted': true},
+    {'name': 'Carla W.', 'salary': 5000, 'highlighted': false},
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff5f5f5),
 
-      body: Center(
-        child: Container(
-          width: 900,
-          padding: const EdgeInsets.all(24),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Container(
+            width: 900,
+            padding: const EdgeInsets.all(24),
 
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
 
-            children: [
-              // HEADER
-              Container(
-                padding: const EdgeInsets.all(24),
+              children: [
+                // HEADER
+                Container(
+                  padding: const EdgeInsets.all(24),
 
-                decoration: BoxDecoration(
-                  color: const Color(0xff3f5f8a),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff3f5f8a),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
 
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  child: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
 
-                  children: [
-                    Text(
-                      'Employee Management System',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 36,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    SizedBox(height: 16),
-
-                    Text(
-                      'Total employees: 3',
-                      style: TextStyle(color: Colors.white, fontSize: 24),
-                    ),
-
-                    SizedBox(height: 8),
-
-                    Text(
-                      'Receiving a bonus: 1',
-                      style: TextStyle(color: Colors.white, fontSize: 24),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              Container(
-                padding: const EdgeInsets.all(24),
-
-                decoration: BoxDecoration(
-                  color: const Color(0xff3f5f8a),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-
-                child: Column(
-                  children: [
-                    TextField(
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        hintText: 'Search employee...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(6),
+                    children: [
+                      Text(
+                        'Employee Management System',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
 
-                    const SizedBox(height: 16),
+                      SizedBox(height: 16),
 
-                    Row(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: const Text('All employees'),
+                      Text(
+                        'Total employees: 3',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      ),
+
+                      SizedBox(height: 8),
+
+                      Text(
+                        'Receiving a bonus: 1',
+                        style: TextStyle(color: Colors.white, fontSize: 24),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                Container(
+                  padding: const EdgeInsets.all(24),
+
+                  decoration: BoxDecoration(
+                    color: const Color(0xff3f5f8a),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+
+                  child: Column(
+                    children: [
+                      TextField(
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintText: 'Search employee...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(6),
+                          ),
                         ),
+                      ),
 
-                        const SizedBox(width: 12),
+                      const SizedBox(height: 16),
 
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white),
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {},
+                            child: const Text('All employees'),
                           ),
 
-                          onPressed: () {},
+                          const SizedBox(width: 12),
 
-                          child: const Text('For promotion'),
-                        ),
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              side: const BorderSide(color: Colors.white),
+                            ),
 
-                        const SizedBox(width: 12),
+                            onPressed: () {},
 
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            side: const BorderSide(color: Colors.white),
+                            child: const Text('For promotion'),
                           ),
 
-                          onPressed: () {},
+                          const SizedBox(width: 12),
 
-                          child: const Text('Salary over \$1000'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              side: const BorderSide(color: Colors.white),
+                            ),
 
-              employeeItem(name: 'John H.', salary: '\$800'),
+                            onPressed: () {},
 
-              employeeItem(
-                name: 'Alex M.',
-                salary: '\$3000',
-                highlighted: true,
-              ),
-
-              employeeItem(name: 'Carla W.', salary: '\$5000'),
-              const SizedBox(height: 24),
-
-              Container(
-                padding: const EdgeInsets.all(24),
-
-                decoration: BoxDecoration(
-                  color: const Color(0xff3f5f8a),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-
-                  children: [
-                    const Text(
-                      'Add a New Employee',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
+                            child: const Text('Salary over \$1000'),
+                          ),
+                        ],
                       ),
-                    ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
 
-                    const SizedBox(height: 24),
+                ...employees.map((employee) {
+                  return employeeItem(
+                    name: employee['name'],
+                    salary: '\$${employee['salary']}',
+                    highlighted: employee['highlighted'],
+                  );
+                }),
+                Container(
+                  padding: const EdgeInsets.all(24),
 
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              hintText: 'Enter employee name',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff3f5f8a),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                    children: [
+                      const Text(
+                        'Add a New Employee',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 24),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: nameController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                hintText: 'Enter employee name',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
                               ),
                             ),
                           ),
-                        ),
 
-                        const SizedBox(width: 16),
+                          const SizedBox(width: 16),
 
-                        Expanded(
-                          child: TextField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              hintText: 'Enter salary in \$',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(6),
+                          Expanded(
+                            child: TextField(
+                              controller: salaryController,
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                hintText: 'Enter salary in \$',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
                               ),
                             ),
                           ),
-                        ),
 
-                        const SizedBox(width: 16),
+                          const SizedBox(width: 16),
 
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: const Text('Add'),
-                        ),
-                      ],
-                    ),
-                  ],
+                          ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                employees.add({
+                                  'name': nameController.text,
+                                  'salary': int.parse(salaryController.text),
+                                  'highlighted': false,
+                                });
+
+                                nameController.clear();
+                                salaryController.clear();
+                              });
+                            },
+                            child: const Text('Add'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
