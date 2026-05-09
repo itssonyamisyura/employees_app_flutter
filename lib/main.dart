@@ -36,6 +36,15 @@ class _HomeScreenState extends State<HomeScreen> {
     {'name': 'Carla W.', 'salary': 5000, 'highlighted': false},
   ];
 
+  String searchTerm = '';
+  List<Map<String, dynamic>> get filteredEmployees {
+    return employees.where((employee) {
+      final name = employee['name'].toString().toLowerCase();
+
+      return name.contains(searchTerm.toLowerCase());
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -102,6 +111,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     children: [
                       TextField(
+                        onChanged: (value) {
+                          setState(() {
+                            searchTerm = value;
+                          });
+                        },
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.white,
@@ -153,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                ...employees.map((employee) {
+                ...filteredEmployees.map((employee) {
                   return employeeItem(
                     name: employee['name'],
                     salary: '\$${employee['salary']}',
