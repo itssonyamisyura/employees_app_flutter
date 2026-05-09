@@ -286,7 +286,11 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                employees.removeWhere((employee) => employee['name'] == name);
+              });
+            },
             icon: const Icon(Icons.delete, color: Colors.red),
           ),
         ],
