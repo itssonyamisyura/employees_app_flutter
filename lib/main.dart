@@ -172,6 +172,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     name: employee['name'],
                     salary: '\$${employee['salary']}',
                     highlighted: employee['highlighted'],
+
+                    onToggleStar: () {
+                      setState(() {
+                        employee['highlighted'] = !employee['highlighted'];
+                      });
+                    },
                   );
                 }),
                 Container(
@@ -263,6 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String name,
     required String salary,
     bool highlighted = false,
+    required VoidCallback onToggleStar,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -295,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 24),
 
           IconButton(
-            onPressed: () {},
+            onPressed: onToggleStar,
             icon: const Icon(Icons.star, color: Colors.orange),
           ),
 
