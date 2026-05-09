@@ -37,11 +37,29 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   String searchTerm = '';
+  String filter = 'all';
+
   List<Map<String, dynamic>> get filteredEmployees {
     return employees.where((employee) {
       final name = employee['name'].toString().toLowerCase();
+      final salary = employee['salary'] as int;
+      final highlighted = employee['highlighted'] as bool;
 
-      return name.contains(searchTerm.toLowerCase());
+      final matchesSearch = name.contains(searchTerm.toLowerCase());
+
+      if (!matchesSearch) {
+        return false;
+      }
+
+      if (filter == 'promotion') {
+        return highlighted;
+      }
+
+      if (filter == 'salary') {
+        return salary > 1000;
+      }
+
+      return true;
     }).toList();
   }
 
@@ -131,7 +149,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       Row(
                         children: [
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                filter = 'all';
+                              });
+                            },
                             child: const Text('All employees'),
                           ),
 
@@ -143,7 +165,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               side: const BorderSide(color: Colors.white),
                             ),
 
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                filter = 'promotion';
+                              });
+                            },
 
                             child: const Text('For promotion'),
                           ),
@@ -156,7 +182,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               side: const BorderSide(color: Colors.white),
                             ),
 
-                            onPressed: () {},
+                            onPressed: () {
+                              setState(() {
+                                filter = 'salary';
+                              });
+                            },
 
                             child: const Text('Salary over \$1000'),
                           ),
