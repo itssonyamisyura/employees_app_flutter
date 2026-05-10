@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -30,14 +32,30 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController salaryController = TextEditingController();
 
-  final List<Map<String, dynamic>> employees = [
-    {'name': 'John H.', 'salary': 800, 'highlighted': false},
-    {'name': 'Alex M.', 'salary': 3000, 'highlighted': true},
-    {'name': 'Carla W.', 'salary': 5000, 'highlighted': false},
-  ];
+  List<Map<String, dynamic>> employees = [];
+  final String apiUrl = 'http://127.0.0.1:8000/employees';
 
   String searchTerm = '';
   String filter = 'all';
+
+  Future<void> fetchEmployees() async {
+    final response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+
+      setState(() {
+        employees = data.map((item) {
+          return {
+            'id': item['id'],
+            'name': item['name'],
+            'salary': item['salary'],
+            'highlighted': item['highlighted'],
+          };
+        }).toList();
+      });
+    }
+  }
 
   List<Map<String, dynamic>> get filteredEmployees {
     return employees.where((employee) {
@@ -64,6 +82,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchEmployees();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff5f5f5),
@@ -87,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(8),
                   ),
 
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
 
                     children: [
@@ -103,14 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 16),
 
                       Text(
-                        'Total employees: 3',
+                        'Total employees: ${employees.length}',
                         style: TextStyle(color: Colors.white, fontSize: 24),
                       ),
 
                       SizedBox(height: 8),
 
                       Text(
-                        'Receiving a bonus: 1',
+                        'Receiving a bonus: ${employees.where((employee) => employee['highlighted'] == true).length}',
                         style: TextStyle(color: Colors.white, fontSize: 24),
                       ),
                     ],
@@ -199,14 +223,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 ...filteredEmployees.map((employee) {
                   return employeeItem(
+                    onDelete: () async {
+                      await http.delete(Uri.parse('$apiUrl/${employee['id']}'));
+
+                      await fetchEmployees();
+                    },
                     name: employee['name'],
                     salary: '\$${employee['salary']}',
                     highlighted: employee['highlighted'],
 
-                    onToggleStar: () {
-                      setState(() {
-                        employee['highlighted'] = !employee['highlighted'];
-                      });
+                    onToggleStar: () async {
+                      await http.put(
+                        Uri.parse('$apiUrl/${employee['id']}/toggle'),
+                      );
+
+                      await fetchEmployees();
                     },
                   );
                 }),
@@ -268,17 +299,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(width: 16),
 
                           ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                employees.add({
-                                  'name': nameController.text,
-                                  'salary': int.parse(salaryController.text),
-                                  'highlighted': false,
-                                });
+                            onPressed: () async {
+                              final name = nameController.text;
+                              final salary = int.parse(salaryController.text);
 
-                                nameController.clear();
-                                salaryController.clear();
-                              });
+                              await http.post(
+                                Uri.parse(apiUrl),
+                                headers: {'Content-Type': 'application/json'},
+                                body: jsonEncode({
+                                  'name': name,
+                                  'salary': salary,
+                                  'highlighted': false,
+                                }),
+                              );
+
+                              nameController.clear();
+                              salaryController.clear();
+
+                              fetchEmployees();
                             },
                             child: const Text('Add'),
                           ),
@@ -300,6 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required String salary,
     bool highlighted = false,
     required VoidCallback onToggleStar,
+    required VoidCallback onDelete,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -337,11 +376,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           IconButton(
-            onPressed: () {
-              setState(() {
-                employees.removeWhere((employee) => employee['name'] == name);
-              });
-            },
+            onPressed: onDelete,
             icon: const Icon(Icons.delete, color: Colors.red),
           ),
         ],
